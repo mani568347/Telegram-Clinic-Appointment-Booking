@@ -1,0 +1,32 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# n8n local data
+.n8n/
+n8n_data/
+
+# Credentials and secrets
+credentials.json
+client_secret.json
+service-account.json
+*secret*
+*credentials*
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
