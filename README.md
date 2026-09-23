@@ -67,3 +67,13 @@ Telegram-Clinic-Appointment-Booking/
 ├── README.md
 ├── .gitignore
 └── telegram-clinic-appointment-workflow-safe.json
+## 📸 Screenshots
+
+### 🔄 n8n Workflow
+![n8n Workflow](./work_flow.png)
+
+### 📱 Telegram Appointment & Confirmation
+![Telegram Confirmation](./patient_msg_confirmation.png)
+
+### 📊 Google Sheets
+![Google Sheets](./google_sheet.png)
