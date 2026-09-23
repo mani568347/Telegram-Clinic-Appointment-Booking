@@ -65,4 +65,5 @@ Patients can send their appointment details directly to a Telegram bot. The n8n 
 Telegram-Clinic-Appointment-Booking/
 │
 ├── README.md
+├── .gitignore
 └── telegram-clinic-appointment-workflow-safe.json
