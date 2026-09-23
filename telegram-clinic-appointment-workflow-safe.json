@@ -1,0 +1,314 @@
+{
+  "name": "Clinic WhatsApp Appointment Booking",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "appointment",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "fa937a5f-9d02-4c06-a248-61eb3bdbb674"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Book Appointment"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        0
+      ],
+      "id": "c5975181-f851-43fd-9d9e-ab525b8191f1",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Clinic Appointment Bookings",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Appointment ID": "={{ $json.appointmentId }}",
+            "Patient Name": "={{ $json.patientName }}",
+            "Date": "={{ $json.date }}",
+            "Time": "={{ $json.time }}",
+            "Reason": "={{ $json.reason }}",
+            "Phone Number": "=",
+            "Status": "={{ $json.status }}",
+            "Created At": "={{ $json.createdAt }}"
+          },
+          "matchingColumns": [
+            "Appointment ID"
+          ],
+          "schema": [
+            {
+              "id": "Appointment ID",
+              "displayName": "Appointment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Created At",
+              "displayName": "Created At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "222f8116-4486-4a7e-9eec-552a16635802",
+      "name": "Append or update row in sheet"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b41a9e53-1c23-4ffd-b73b-1dbd1a890fe8",
+              "name": "chatId",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "51a35802-e4d1-42e5-8260-c87cf7df7085",
+              "name": "message",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        0
+      ],
+      "id": "bff14573-c687-40c0-b3e1-7490150f865b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\nconst message = item.message || \"\";\nconst chatId = item.chatId || \"\";\n\nconst nameMatch = message.match(\n  /(?:my name is|name is|name[:\\-]?)\\s*([a-zA-Z ]+)/i\n);\n\nconst dateMatch = message.match(\n  /(?:date[:\\-]?\\s*)?(\\d{1,2}[-\\/]\\d{1,2}[-\\/]\\d{2,4})/i\n);\n\nconst timeMatch = message.match(\n  /(\\d{1,2}(?::\\d{2})?\\s*(?:AM|PM))/i\n);\n\nconst reasonMatch = message.match(\n  /(?:reason|problem|for|reason is)[:\\-]?\\s*([a-zA-Z ]+)/i\n);\n\nconst patientName = nameMatch ? nameMatch[1].trim() : \"\";\nconst date = dateMatch ? dateMatch[1] : \"\";\nconst time = timeMatch ? timeMatch[1] : \"\";\nconst reason = reasonMatch ? reasonMatch[1].trim() : \"\";\n\nconst appointmentId =\n  \"APT-\" + Date.now().toString().slice(-6);\n\nconst createdAt = new Date().toLocaleString(\"en-IN\", {\n  timeZone: \"Asia/Kolkata\"\n});\n\nreturn [{\n  json: {\n    appointmentId,\n    patientName,\n    date,\n    time,\n    reason,\n    chatId,\n    status: \"Confirmed\",\n    createdAt\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "608fe14b-f33a-4794-a577-608b2009856c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Code in JavaScript').first().json.chatId }}",
+        "text": "=✅ Appointment Confirmed!\n\nAppointment ID: {{ $('Code in JavaScript').first().json.appointmentId }}\n\nPatient Name: {{ $('Code in JavaScript').first().json.patientName }}\nDate: {{ $('Code in JavaScript').first().json.date }}\nTime: {{ $('Code in JavaScript').first().json.time }}\nReason: {{ $('Code in JavaScript').first().json.reason }}\n\nThank you for booking with our clinic.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1312,
+        0
+      ],
+      "id": "dad9b99c-dc75-4c15-9dfc-b5519c92159d",
+      "name": "Send a text message"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "85ed7a34-066b-4595-bf38-89ecfb3fb343",
+      "name": "Telegram Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "nodeGroups": [],
+  "tags": []
+}
